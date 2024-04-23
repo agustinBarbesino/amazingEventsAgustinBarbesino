@@ -2,3 +2,27 @@
     height: 30vh;
     object-fit: cover;
 }
+
+#details img{
+    object-fit: cover;
+    border-radius: 1vw;
+}
+
+html{
+    height: 100%;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+footer{
+    margin-top: auto;
+}
+
+footer img{
+    width: 3vw;
+    object-fit: cover;
+}
