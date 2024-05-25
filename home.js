@@ -193,11 +193,14 @@ const events = [
       },
     ]
 
+
 const cardContainer = document.getElementById("cardContainer")
 
-generateCard(cardContainer, events) 
+generateCard(cardContainer, events)
+generateCheckbox() 
   
 function generateCard(cardContainer, events) {
+  cardContainer.innerHTML=""
   for (let i = 0; i < events.length; i++) {
     let newCard = document.createElement("div")  
     newCard.classList.add("card", "col-6",  "col-md-3", "p-3")
@@ -209,7 +212,7 @@ function generateCard(cardContainer, events) {
     </div>
     <div class="card-body">
       <a href="#" class="card-link">Price: $${events[i].price}</a>
-      <a href="details.html" class="card-link">Details</a>
+      <a href="details.html?value=${events[i]._id}" class="details card-link">Details</a>
     </div>`
 
     cardContainer.appendChild(newCard)  
@@ -217,4 +220,76 @@ function generateCard(cardContainer, events) {
   }
     
 }
-  
+
+function generateCheckbox() {
+  let divcheck = document.getElementById("divSearch")
+  divcheck.innerHTML = ""
+  let categorys = [] 
+
+  for (let i = 0; i < events.length; i++) {
+    if (!categorys.includes(events[i].category)) {
+      categorys.push(events[i].category)
+    } 
+  }
+
+  console.log(categorys);
+
+  for (let i = 0; i < categorys.length; i++) {
+    let check = document.createElement("div")
+    check.classList.add("m-3", "form-check")
+    check.innerHTML = 
+    `<input type="checkbox" class="check form-check-input" value="${categorys[i]}">
+    <label class="form-check-label" for="check">${categorys[i]}</label>`
+
+    console.log(check);
+    divcheck.appendChild(check)
+    
+  }
+}
+
+let searchBox = document.getElementById("search")
+let checkArray = document.querySelectorAll(".check")
+
+checkArray.forEach(checkbox => {
+   checkbox.addEventListener("change", applyFilters) 
+})
+
+searchBox.addEventListener("input", applyFilters)
+
+function applyFilters() {
+  let text = searchBox.value
+  let filteredEvents = events
+  if (text !== "") {
+    filteredEvents = filterSearch(text, filteredEvents)
+  }
+
+  filteredEvents = filterCheck(checkArray, filteredEvents)
+  if (filteredEvents.length == 0) {
+    alert("No events were founded! Try again.")
+  }
+  generateCard(cardContainer, filteredEvents.length > 0 ? filteredEvents : events);
+}
+
+function filterCheck(checkArray, array) {
+  let checkedEvents = []
+   
+  checkArray.forEach(checkbox => {
+    if (checkbox.checked) {
+      array.forEach(event => {
+        if (event.category === checkbox.value) {
+          checkedEvents.push(event)
+        }
+      })
+    }  
+  })
+  if (checkedEvents.length != 0) {
+    return checkedEvents
+  } else {
+    return array
+  }
+ }
+
+function filterSearch(text, array) {
+  searchedEvents = array.filter(event => event.name.toLowerCase().includes(text.toLowerCase()))
+  return searchedEvents
+}
